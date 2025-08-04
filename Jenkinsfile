@@ -48,9 +48,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'win-ssh-creds', usernameVariable: 'SSH_USER', passwordVariable: 'SSH_PASS')]) {
           sh '''
           sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no -r deploy/* $SSH_USER@$REMOTE_HOST:"$REMOTE_PATH/"
-
           sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST powershell -Command "
-            cd '$REMOTE_PATH';
+            cd '$env:REMOTE_PATH';
             npm install --omit=dev;
             npm run start;
           "
@@ -61,7 +60,7 @@ pipeline {
 
     stage('Cleanup') {
       steps {
-        sh 'rm -rf deploy'
+        sh 'rm -rf deploy .next node_modules'
       }
     }
   }
