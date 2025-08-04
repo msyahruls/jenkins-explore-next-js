@@ -8,10 +8,23 @@ pipeline {
     REMOTE_PATH = 'C:/Users/user/Documents/Repositories/learn/next-js-demo'
   }
 
+  triggers {
+    githubPush()
+  }
+
   stages {
-    stage('Checkout') {
+    stage('Check Branch') {
+      when {
+        not {
+          branch 'development'
+        }
+      }
       steps {
-        git 'https://github.com/msyahruls/jenkins-explore-next-js.git'
+        echo 'Not on development branch — skipping pipeline.'
+        script {
+          currentBuild.result = 'SUCCESS'
+          return
+        }
       }
     }
 
