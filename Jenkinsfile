@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    REMOTE_USER = 'lpdgi-syahrulsetiawan'
+    REMOTE_USER = 'user'
     REMOTE_HOST = '172.16.1.167'
     // REMOTE_PATH = 'C:/apps/next-app'
     REMOTE_PATH = 'C:/Users/user/Documents/Repositories/learn/next-js-demo'
