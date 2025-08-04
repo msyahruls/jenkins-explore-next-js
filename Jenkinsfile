@@ -4,7 +4,6 @@ pipeline {
   environment {
     REMOTE_USER = 'user'
     REMOTE_HOST = '172.16.1.167'
-    // REMOTE_PATH = 'C:/apps/next-app'
     REMOTE_PATH = 'C:/Users/user/Documents/Repositories/learn/next-js-demo'
   }
 
@@ -46,14 +45,17 @@ pipeline {
 
     stage('Deploy via SSH') {
       steps {
-        sh '''
-        scp -r deploy/* $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/
-        ssh $REMOTE_USER@$REMOTE_HOST powershell -Command "
-          cd $env:REMOTE_PATH;
-          npm install --omit=dev;
-          npm run start;
-        "
-        '''
+        withCredentials([usernamePassword(credentialsId: 'win-ssh-creds', usernameVariable: 'SSH_USER', passwordVariable: 'SSH_PASS')]) {
+          sh '''
+          sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no -r deploy/* $SSH_USER@$REMOTE_HOST:"$REMOTE_PATH/"
+
+          sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST powershell -Command "
+            cd '$REMOTE_PATH';
+            npm install --omit=dev;
+            npm run start;
+          "
+          '''
+        }
       }
     }
 
